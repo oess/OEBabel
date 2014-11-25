@@ -1,0 +1,1078 @@
+!CATEGORY basic -9
+  !BRIEF file i/o and other top level options
+  !PARAMETER -in -9
+    !ALIAS -i
+    !TYPE string
+    !KEYLESS 1
+    !BRIEF input file
+    !DETAIL
+Extension-only implies stdin.  
+Note that OEB and BIN are the only formats
+which are multiconformer by default.
+Note that normally all formatting
+can be denoted by file extensions, including
+the optional '.gz' indicating gzipped.  E.g.,
+  babel -in foo.sdf -out bar.mol2
+  babel -in foo.sdf.gz -out bar.smi
+  cat foo.sdf.gz | babel -ifmt sdf -igz -out bar.smi
+  cat foo.sdf.gz | babel -in .sdf.gz -out bar.smi
+  !END
+  !PARAMETER -out -8
+    !ALIAS -o
+    !TYPE string
+    !KEYLESS 2
+    !BRIEF output file
+    !DETAIL
+Extension-only implies stdout.
+If no output or output format specified,
+no output is written.
+Note that OEB is the only output format
+which is multiconformer by default.
+Note that normally all formatting
+can be denoted by file extensions, including
+the optional '.gz' indicating gzipped.  E.g.,
+  babel -in foo.sdf -out bar.mol2
+  babel -in foo.sdf -out bar.oeb.gz
+  babel -in foo.sdf -out .mol2 > bar.mol2
+  babel -in foo.sdf -out .oeb.gz > bar.oeb.gz
+  !END
+  !PARAMETER -firstonly
+    !ALIAS -1
+    !TYPE bool
+    !DEFAULT false
+    !BRIEF convert first molecule
+  !END
+  !PARAMETER -n
+    !TYPE int
+    !DEFAULT 0
+    !BRIEF convert only N molecules (0 means all)
+  !END
+  !PARAMETER -skip
+    !TYPE int
+    !DEFAULT 0
+    !BRIEF skip first N molecules
+  !END
+  !PARAMETER -helpformats
+    !TYPE bool
+    !DEFAULT false
+    !BRIEF list supported formats
+  !END
+  !PARAMETER -v
+    !TYPE bool
+    !DEFAULT false
+    !BRIEF verbose
+  !END
+  !PARAMETER -vv
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF very verbose
+  !END
+!END
+!CATEGORY advanced -8
+  !PARAMETER -ifmt -7
+    !TYPE string
+    !SIMPLE no
+    !BRIEF input format
+    !DETAIL
+Input format.  Note that normally all formatting
+can be denoted by file extensions, including
+the optional '.gz' indicating gzipped.  E.g.,
+  cat foo.sdf.gz | babel -ifmt sdf -igz -out bar.smi
+  !END
+  !PARAMETER -ofmt -6
+    !TYPE string
+    !SIMPLE no
+    !BRIEF output format
+    !DETAIL
+Output format.  Note that normally all formatting
+can be denoted by file extensions, including
+the optional '.gz' indicating gzipped.  E.g.,
+  babel -in foo.sdf -ofmt mol2 > bar.mol2
+  !END
+  !PARAMETER -hydrogens
+    !TYPE string
+    !SIMPLE no
+    !ALIAS -h
+    !LEGAL_VALUE add
+    !LEGAL_VALUE add_mdl_implicit
+    !LEGAL_VALUE delete
+    !LEGAL_VALUE same
+    !DEFAULT same
+    !BRIEF hydrogen handling
+    !DETAIL
+      add - add hydrogens (implicit to explicit)
+      delete - delete hydrogens (explicit to implicit)
+      add_mdl_implicit - add implicit hydrogens per MDL valence model
+      same - same as input
+  !END
+  !PARAMETER -igz
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF ungzip input
+    !DETAIL
+Input source is gzipped.  Requires -ifmt to be manually set.
+Not normally needed, except when extensions do not convey format
+(such as when stdin/stdout is used or files are misnamed).
+  !END
+  !PARAMETER -ogz
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF gzip output
+    !DETAIL
+Gzip output.  Requires -ofmt to be manually set.
+Not normally needed, except when extensions do not convey format
+(such as when stdin/stdout is used or files are misnamed).
+  !END
+  !PARAMETER -parts2mols
+    !ALIAS -s
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF split out connected components
+  !END
+  !PARAMETER -singlethread
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF don't use threaded IO
+  !END
+  !PARAMETER -mc
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF treat the file as multi-conformer
+  !END
+  !PARAMETER -mc_isomer
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF treat the file as multi-conformer (isomeric)
+  !END
+  !PARAMETER -mc_titles
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF mc perception title-sensitive
+  !END
+  !PARAMETER -sc
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF handle as single-conformer molecules
+  !END
+  !PARAMETER -mc2sc
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF one output scmol for each input mcmol
+  !END
+  !PARAMETER -sd2title
+    !ALIAS -t
+    !TYPE string
+    !SIMPLE no
+    !BRIEF copy specified SD data to title
+  !END
+  !PARAMETER -quiet
+    !ALIAS -q
+    !ALIAS -nobanner
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF minimal verbosity, no banner
+  !END
+  !PARAMETER -nowarn
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF supress warnings
+  !END
+  !PARAMETER -stereofrom3d
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF perceive stereo from input 3D
+  !END
+  !PARAMETER -mdlcorrectstereo
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF correct non-compliant MDL stereo if possible
+    !DETAIL
+This only is applicable to input MDL format, and addresses cases where 
+non-compliant bond stereo (wedge/hash) can be interpreted reliably.
+One typical case is where the fat end of a bond indicates a chiral center
+instead of the thin end.  The function OEMDLCorrectBondStereo() is used.
+  !END
+  !PARAMETER -molcount
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF write molcount to stdout
+  !END
+  !PARAMETER -add2d
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF add 2D coordinates
+    !DETAIL
+Generate 2D coordinates and include in the output.  This functionality is
+disabled in the absence of a valid Ogham (oedepict) license.  -add2d is
+incompatible with output formats which cannot represent 2D.
+  !END
+  !PARAMETER -output_params
+    !TYPE string
+    !SIMPLE no
+    !BRIEF write execution parameters to file
+  !END
+  !PARAMETER -input_params
+    !TYPE param_file
+    !SIMPLE no
+    !BRIEF read execution parameters from file
+  !END
+  !PARAMETER -output_names
+    !TYPE string
+    !SIMPLE no
+    !BRIEF write molecule names to file
+    !DETAIL
+Write molecule names, a.k.a. titles, to specified file.  An empty line is
+written for nameless molecules.  One name per input multiconformer
+molecule.
+  !END
+  !PARAMETER -perceive_residues
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF perceive macromolecular residues 
+    !DETAIL
+Perceive macromolecular residues.  Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.
+  !END
+  !PARAMETER -perceive_residues_preserve_ChainID
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving chain IDs.
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_ResidueNumber
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving residue numbers.
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_ResidueName
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving residue names.
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_SerialNumber
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving serial numbers. 
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_AlternateLocation
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving alternate locations.
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_InsertCode
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving insert codes.
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_HetAtom
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Perceive macromolecular residues while preserving HET atoms.
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.  Multiple -perceive_residues_preserve_* flags may be used.
+  !END
+  !PARAMETER -perceive_residues_preserve_All
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !DETAIL
+Equivalent to:
+  -perceive_residues_preserve_ChainID
+  -perceive_residues_preserve_ResidueNumber
+  -perceive_residues_preserve_ResidueName
+  -perceive_residues_preserve_SerialNumber
+  -perceive_residues_preserve_AlternateLocation
+  -perceive_residues_preserve_InsertCode
+  -perceive_residues_preserve_HetAtom
+
+Intended for use with PDB format only. 
+Residues specified by the input file may be changed and renumbered to generate a
+standard output.
+  !END
+  !PARAMETER -oeb_keep_roc
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF keep rotor-offset-compressed OEB
+    !ALIAS -oeb_keep_rotorOffsetCompress
+    !DETAIL
+Rotor-offset-compressed (roc) OEB is generated by default by Omega.  This option is
+only meaningful for OEB input and output (such as for chunking or subsetting the file).
+OEB-ROC may be many times smaller than a comparable non-ROC file, depending on the
+number of conformations per mol.
+  !END
+  !PARAMETER -delete_invalid_stereo
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF delete stereo specifications for non-chiral atoms and bonds
+    !DETAIL
+By default OEChem and Babel preserves input data when possible, though it
+may be inconsistent or problematic.  This option clears stereo specifications for
+atoms which are not R/S chiral and bonds which are not E/Z chiral.
+  !END
+  !PARAMETER -canonical_isomeric_smiles
+    !ALIAS -can_iso_smi
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF output is canonical stereoisomeric smiles
+    !DETAIL
+This flag overrides the format specification in the output file name
+and is normally used with .smi, .can or .ism output.  Equivalent to:
+
+  -delete_invalid_stereo
+
+(default .can flags:)
+  -smioRGroups
+  -smioCanonical
+  -smioAtomMaps
+
+(additional default .ism flags:)
+  -smioIsotopes
+  -smioAtomStereo
+  -smioBondStereo
+
+  !END
+  !PARAMETER -canonical_kekule
+    !ALIAS -can_kek
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF output is canonical Kekule structure
+    !DETAIL
+This option in effect adds the following flag:
+
+        -smioKekule
+
+but also goes one step further.  In many aromatic systems the assignment
+of bond orders is somewhat arbitrary.  So, to achieve a canonical bond
+order assignment, the atom and bond orderings are canonicalized and
+bond orders are reassigned from scratch.
+
+This option can be used together with -canonical_isomeric_smiles
+to generate canonical Kekule isomeric smiles.
+  !END
+  !CATEGORY chunker
+    !BRIEF split the input file into multiple files
+    !DETAIL
+Output file prefix should be specified by -prefix. Default output file
+prefix is the -out file basename. If -ofmt and -ogz are being used the
+prefix defaults to "babel_chunk".
+    !PARAMETER -nchunks 3
+      !TYPE int
+      !SIMPLE no
+      !REQUIRED false
+      !BRIEF split input file in N chunks of equal size
+    !END
+    !PARAMETER -chunksize 3 
+      !TYPE int
+      !SIMPLE no
+      !REQUIRED false
+      !BRIEF split input file into chunks of N molecules
+    !END
+    !PARAMETER -prefix
+      !TYPE string
+      !SIMPLE no
+      !REQUIRED false
+      !BRIEF file prefix for output chunk files
+    !END
+  !END
+!END
+!CATEGORY "flavors, input format specific" -5
+  !BRIEF format specific input flavors
+  !CATEGORY "flavors, mmod specific"
+  !PARAMETER -mmodiFormalCrg
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mmodiDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to: (no flavor)
+  !END
+  !END
+  !CATEGORY "flavors, mol2 specific"
+  !PARAMETER -mol2iM2H
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2iDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to: (no flavor)
+  !END
+  !END
+  !CATEGORY "flavors, pdb specific"
+  !PARAMETER -pdbiTER
+    !BRIEF read TER as separator
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiEND
+    !BRIEF read END as separator
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiENDM
+    !BRIEF read ENDM as separator
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiTerMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiALL
+    !BRIEF read all atoms including alternate locations, dummy atoms, etc.
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiDATA
+    !BRIEF preserve header data as generic data
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiCHARGE
+    !BRIEF read partial charges from b-factor field
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiRADIUS
+    !BRIEF read atomic radius from occupancy field
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiDELPHI
+    !BRIEF combines -pdbiCHARGE and -pdbiRADIUS
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiBasicMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiFormalCrg
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiImplicitH
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiBondOrder
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiRings
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiConnect
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiExtraMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiAllMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdbiDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -pdbiEND
+    -pdbiENDM
+    -pdbiFormalCrg
+    -pdbiImplicitH
+    -pdbiBondOrder
+    -pdbiRings
+    -pdbiConnect
+  !END
+  !END
+  !CATEGORY "flavors, smiles specific"
+  !PARAMETER -smiiCanon
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smiiStrict
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smiiDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to: (no flavor)
+  !END
+  !END
+  !CATEGORY "flavors, xyz specific"
+  !PARAMETER -xyziFormalCrg
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -xyziImplicitH
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -xyziBondOrder
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -xyziRings
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -xyziConnect
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -xyziExtraMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -xyziDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -xyziFormalCrg
+    -xyziImplicitH
+    -xyziBondOrder
+    -xyziRings
+    -xyziConnect
+  !END
+  !END
+!END
+
+!CATEGORY "flavors, output format specific" -4
+  !BRIEF format specific output flavors
+  !CATEGORY "flavors, mdl specific"
+  !PARAMETER -mdloMCHG
+    !BRIEF write MCHG and MRAD fields for charged/radical atoms
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloMISO
+    !BRIEF write ISO field for isotopes
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloMRGP
+    !BRIEF write RGP field for each R-group atom
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloMV30
+    !BRIEF MDL V3000 format
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloMDLParity
+    !BRIEF write MDL parity
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloNoParity
+    !BRIEF write no parity
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloCurrentParity
+    !BRIEF write internal parity
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloMMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloPMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mdloDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -mdloMCHG
+    -mdloMISO
+    -mdloMRGP
+    -mdloMDLParity
+  !END
+  !END
+  !CATEGORY "flavors, mf specific"
+  !PARAMETER -mfoTitle
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mfoDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -mfoTitle
+  !END
+  !END
+  !CATEGORY "flavors, mmod specific"
+  !PARAMETER -mmodoAtomTypes
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mmodoDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -mmodoAtomTypes
+  !END
+  !END
+  !CATEGORY "flavors, mol2 specific"
+  !PARAMETER -mol2oAtomTypeNames
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oBondTypeNames
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oAtomNames
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oOrderAtoms
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oHydrogens
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oSubstructure
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oNameMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mol2oDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -mol2oAtomTypeNames
+    -mol2oBondTypeNames
+    -mol2oAtomNames
+    -mol2oOrderAtoms
+  !END
+  !END
+  !CATEGORY "flavors, mopac specific"
+  !PARAMETER -mopacoXYZ
+    !BRIEF cartesian coords (default is internal coords/z-matrix)
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mopacoCHARGES
+    !BRIEF write charges
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -mopacoDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -mopacoCHARGES
+  !END
+  !END
+  !CATEGORY "flavors, pdb specific"
+  !PARAMETER -pdboBONDS
+    !BRIEF write CONECT records (all single without -pdboORDERS)
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboORDERS
+    !BRIEF include bond orders in CONECT records
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboBOTH
+    !BRIEF bi-directional CONECT records
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboCHARGE
+    !BRIEF write partial charges to b-factor field
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboRADIUS
+    !BRIEF write atomic radii to occupancy field
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboDELPHI
+    !BRIEF combines -pdboCHARGE and -pdboRADIUS
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboTER
+    !BRIEF terminate with TER rather than END
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboOEResidues
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboNoResidues
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboCurrentResidues
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboOrderAtoms
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboELEMENT
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboFormalCrg
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboHETBONDS
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -pdboDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -pdboBOTH
+    -pdboELEMENT
+    -pdboHETBONDS
+    -pdboOEResidues
+    -pdboOrderAtoms
+
+  !END
+  !END
+  !CATEGORY "flavors, smiles specific"
+  !PARAMETER -smioIsotopes
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioHydrogens
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioRGroups
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioAtomStereo
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioBondStereo
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioAtomMaps
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioCanonical
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioKekule
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioSuperAtoms
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioExtBonds
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioSmiMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioImpHCount
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -smioDefault
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+    !BRIEF default flavors
+    !DETAIL
+equivalent to:
+    -smioAtomMaps
+    -smioRGroups
+  !END
+  !END
+!END
+
+!CATEGORY "flavors, input generic" -7
+  !BRIEF generic (format non-specific) input flavors
+  !PARAMETER -iFlavorNone
+    !TYPE bool
+    !DEFAULT false
+    !BRIEF raw, no standardizations
+    !SIMPLE no
+  !END
+  !PARAMETER -iOEAroModelDaylight
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iOEAroModelOpenEye
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iOEAroModelTripos
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iOEAroModelMMFF
+    !TYPE bool
+    !DEFAULT false
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iOEAroModelMDL
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iAroMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iRings
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -iGenericMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+!END
+!CATEGORY "flavors, output generic" -6
+  !BRIEF generic (format non-specific) output flavors
+  !PARAMETER -oFlavorNone
+    !TYPE bool
+    !DEFAULT false
+    !BRIEF raw, no standardizations
+    !SIMPLE no
+  !END
+  !PARAMETER -oOEAroModelDaylight
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oOEAroModelOpenEye
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oOEAroModelTripos
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oOEAroModelMMFF
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oOEAroModelMDL
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oAroMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oRings
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+  !PARAMETER -oGenericMask
+    !TYPE bool
+    !DEFAULT false
+    !SIMPLE no
+  !END
+!END
