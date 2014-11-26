@@ -1,0 +1,20 @@
+#!/bin/bash
+
+srcdir=`dirname $0`
+oearch=`$srcdir/getarch.sh | awk -F- '{printf "%s-%s*%s", $1, $2, $3}'`
+
+if [ ! -e "$srcdir/openeye" ];
+then
+  echo "Please untar the OpenEye C++ Toolkit Distribution into this directory"
+  exit 1
+fi
+
+configure=`ls -1 $srcdir/openeye/toolkits/*/$oearch/examples/configure | head -1`
+
+if [ ! -e $configure ];
+then
+  echo "Please untar the OpenEye C++ Toolkit Distribution for $OE_ARCH into the source directory"
+  exit 1
+fi
+
+source ${configure}
