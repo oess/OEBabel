@@ -18,7 +18,7 @@ set (OE_LIBS
 set (LIBS "${OMPLIBS};${OE_LIBS};${SYSLIBS};${SYSZLIB};${SYSRASTERLIBS}")
 
 set (SRCS
-    "molgrep babel.cpp babel.itf"
+    "babel babel.cpp babel.itf"
 )
 
 add_definitions("${OMPCFLAGS}")
