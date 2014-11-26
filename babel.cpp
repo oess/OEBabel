@@ -1,13 +1,13 @@
 /**********************************************************************
-Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2013 OpenEye Scientific Software, Inc.
+Copyright (C) 2005-2014 OpenEye Scientific Software, Inc.
 ***********************************************************************/
-#include "openeye.h"
+#include <openeye.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "oeplatform.h"
-#include "oesystem.h"
-#include "oedepict.h"
+#include <oeplatform.h>
+#include <oesystem.h>
+#include <oedepict.h>
 
 #include "babel.itf"
 
